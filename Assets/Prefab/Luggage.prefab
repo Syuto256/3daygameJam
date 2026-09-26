@@ -112,6 +112,13 @@ MonoBehaviour:
   _routeController: {fileID: 0}
   _correctType: 0
   _luggageType: 0
+  _spriteRenderer: {fileID: 8263727891665111606}
+  _leftSprite: {fileID: 21300000, guid: e4a3efca04c45014b96aa9ef673c4fce, type: 3}
+  _centerSprite: {fileID: 21300000, guid: a8dfcb18032b62547ad6a2a818b6083b, type: 3}
+  _rightSprite: {fileID: 21300000, guid: be240661a98acbd4e8a25f3c4b3b952d, type: 3}
+  _defectiveLeftSprite: {fileID: 21300000, guid: 47dc81bd4f0bca64f9349c17a7f41d01, type: 3}
+  _defectiveCenterSprite: {fileID: 21300000, guid: 9f1593d02cb8e99479f8a39e3f0889fd, type: 3}
+  _defectiveRightSprite: {fileID: 21300000, guid: f9d2a23f584af924e927532242a6f2b8, type: 3}
 --- !u!61 &8402496081204686980
 BoxCollider2D:
   m_ObjectHideFlags: 0

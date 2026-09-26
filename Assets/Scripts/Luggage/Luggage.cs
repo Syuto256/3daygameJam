@@ -10,12 +10,20 @@ public class Luggage : MonoBehaviour
     public CorrectType CorrectRoute => _correctType;
     [SerializeField] private LuggageStatus _luggageType;
     public LuggageStatus CurrentLuggageType => _luggageType;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] Sprite _leftSprite;
+    [SerializeField] Sprite _centerSprite;
+    [SerializeField] Sprite _rightSprite;
+    [SerializeField] Sprite _defectiveLeftSprite;    
+    [SerializeField] Sprite _defectiveCenterSprite;
+    [SerializeField] Sprite _defectiveRightSprite;
 
     private void Start()
     {
         _moveVector = GetRouteVector(_routeType);
         _correctType = (CorrectType)Random.Range(0,3);
-        _luggageType = (LuggageStatus)Random.Range(0,2);
+        RandomDefective();
+        ChangeSprite();
     }
 
     private void Update()
@@ -30,13 +38,6 @@ public class Luggage : MonoBehaviour
             Debug.Log(_moveVector);
             _routeType = _routeController.CurrentRoute;
             Debug.Log(_routeType);
-            /*if(_luggageType == LuggageStatus.Defective)
-            {
-                if(_routeType == RouteType.Up)
-                {
-
-                }
-            }*/
 
             _moveVector = GetRouteVector(_routeType);
             _moveVector = _moveVector.normalized;
@@ -70,6 +71,59 @@ public class Luggage : MonoBehaviour
         _routeType = RouteType.Center;
         _moveVector = GetRouteVector(_routeType);
         _correctType = (CorrectType)Random.Range(0,3);
-        _luggageType = (LuggageStatus)Random.Range(0,2);
+        RandomDefective();
+        ChangeSprite();
+    }
+
+    private void RandomDefective()
+    {
+        
+        if(Random.Range(0,10) == 1)
+        {
+            _luggageType = LuggageStatus.Defective;
+        }
+        else
+        {
+            _luggageType = LuggageStatus.Normal;
+        }
+    }
+
+    private void ChangeSprite()
+    {
+        if(_luggageType == LuggageStatus.Normal)
+        {
+            switch(_correctType)
+            {
+                case CorrectType.Left:
+                _spriteRenderer.sprite = _leftSprite;
+                return;
+
+                case CorrectType.Center:
+                _spriteRenderer.sprite = _centerSprite;
+                return;
+
+                case CorrectType.Right:
+                _spriteRenderer.sprite = _rightSprite;
+                return;
+            }
+        }
+        else
+        {
+            switch(_correctType)
+            {
+                case CorrectType.Left:
+                _spriteRenderer.sprite = _defectiveLeftSprite; 
+                return;
+
+                case CorrectType.Center:
+                _spriteRenderer.sprite = _defectiveCenterSprite; 
+                return;
+
+                case CorrectType.Right:
+                _spriteRenderer.sprite = _defectiveRightSprite; 
+                return;
+            }
+
+        }
     }
 }
