@@ -51,5 +51,12 @@ public class Luggage : MonoBehaviour
         _routeController = routeController;
     }
 
+    public void ResetLuggage()
+    {
+        _routeType = RouteType.Center;
+         _moveVector = GetRouteVector(_routeType);
+        _correctType = (CorrectType)Random.Range(0,3);
+    }
+
 
 }

@@ -17,6 +17,8 @@ public class RouteJudge : MonoBehaviour
         {
             Debug.Log("不正解");
         }
+        
+        
 
     }
 
