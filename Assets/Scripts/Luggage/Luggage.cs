@@ -6,10 +6,14 @@ public class Luggage : MonoBehaviour
     private Vector2 _moveVector;
     [SerializeField] private RouteType _routeType = RouteType.Center;
     [SerializeField] private RouteController _routeController;
+    [SerializeField] private CorrectType _correctType;
+    public CorrectType CorrectRoute => _correctType;
+    
 
     private void Start()
     {
         _moveVector = GetRouteVector(_routeType);
+        _correctType = (CorrectType)Random.Range(0,3);
     }
 
     private void Update()
@@ -29,11 +33,11 @@ public class Luggage : MonoBehaviour
         switch(routeType)
         {
             case RouteType.Left:
-                return new Vector2(-1,-1);
+                return new Vector2(-3,-1);
             case RouteType.Center:
                 return new Vector2(0,-1);
             case RouteType.Right:
-                return new Vector2(1,-1);
+                return new Vector2(3,-1);
             default :
                 return new Vector2(0,-1);
         }
