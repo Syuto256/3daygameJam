@@ -3,19 +3,20 @@ using UnityEngine;
 public class Luggage : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 5;
-    private Vector2 _moveVector = new Vector2(0,-1);
+    private Vector2 _moveVector;
+    [SerializeField] private RouteType _routeType = RouteType.Center;
 
-    /*private void Start()
+    private void Start()
     {
-        _moveVector = Center;
-    }*/
+        _moveVector = GetRouteVector(_routeType);
+    }
 
-    /*public enum RouteType
+    public enum RouteType
     {
         Left,
         Center,
         Right
-    }*/
+    }
     
     private void Update()
     {     
@@ -24,15 +25,24 @@ public class Luggage : MonoBehaviour
 
     private void OnTriggerEnter2D()
     {
-        _moveVector = new Vector2(-1,-1);
+        _moveVector = GetRouteVector(_routeType);
         _moveVector = _moveVector.normalized;
         
     }
-    /*private RouteType GetRouteVector()
+    private Vector2 GetRouteVector(RouteType routeType)
     {
-        switch(RouteType)
-        case 
-    }*/
+        switch(routeType)
+        {
+            case RouteType.Left:
+                return new Vector2(-1,-1);
+            case RouteType.Center:
+                return new Vector2(0,-1);
+            case RouteType.Right:
+                return new Vector2(1,-1);
+            default :
+                return new Vector2(0,-1);
+        }
+    }
 
 
 }
