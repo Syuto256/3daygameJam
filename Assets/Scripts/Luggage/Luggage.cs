@@ -5,19 +5,13 @@ public class Luggage : MonoBehaviour
     [SerializeField] private float _moveSpeed = 5;
     private Vector2 _moveVector;
     [SerializeField] private RouteType _routeType = RouteType.Center;
+    [SerializeField] private RouteController _routeController;
 
     private void Start()
     {
         _moveVector = GetRouteVector(_routeType);
     }
 
-    public enum RouteType
-    {
-        Left,
-        Center,
-        Right
-    }
-    
     private void Update()
     {     
         transform.Translate(_moveVector * _moveSpeed * Time.deltaTime);
@@ -25,6 +19,7 @@ public class Luggage : MonoBehaviour
 
     private void OnTriggerEnter2D()
     {
+        _routeType = _routeController.CurrentRoute;
         _moveVector = GetRouteVector(_routeType);
         _moveVector = _moveVector.normalized;
         
@@ -42,6 +37,11 @@ public class Luggage : MonoBehaviour
             default :
                 return new Vector2(0,-1);
         }
+    }
+
+    public void SetRouteController(RouteController routeController)
+    {
+        _routeController = routeController;
     }
 
 

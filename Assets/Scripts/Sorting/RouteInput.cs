@@ -1,16 +1,38 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class RouteInput : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private RouteController _routeController;
+    
+    public void OnLeft(InputAction.CallbackContext left)
     {
-        
+        Debug.Log("Leftが呼ばれた。");
+        if(left.performed)
+        {
+            
+            _routeController.ChangeRoute(RouteType.Left);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnCenter(InputAction.CallbackContext center)
     {
-        
+        Debug.Log("Centerが呼ばれた。");
+        if(center.performed)
+        {
+            
+            _routeController.ChangeRoute(RouteType.Center);
+        }
     }
+
+    public void OnRight(InputAction.CallbackContext right)
+    {
+        Debug.Log("Rightが呼ばれた。");
+        if(right.performed)
+        {
+            
+            _routeController.ChangeRoute(RouteType.Right);
+        }
+    }
+
 }
