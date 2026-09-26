@@ -9,6 +9,11 @@ namespace Scripts.Core.Singleton
     {
         private static T instance;
 
+        /// <summary>
+        /// インスタンスが存在するかどうか（安全なヌルチェック用）
+        /// </summary>
+        public static bool HasInstance => instance != null;
+        
         public static T Instance
         {
             get
@@ -28,13 +33,23 @@ namespace Scripts.Core.Singleton
 
         protected virtual void Awake()
         {
-            if (this != Instance)
+            if (instance == null)
+            {
+                instance = this as T;
+                DontDestroyOnLoad(gameObject);
+            }
+            else if (instance != this)
             {
                 Destroy(gameObject);
-                return;
             }
+        }
 
-            DontDestroyOnLoad(gameObject);
+        protected virtual void OnDestroy()
+        {
+            if (instance == this)
+            {
+                instance = null;
+            }
         }
     }
 }
