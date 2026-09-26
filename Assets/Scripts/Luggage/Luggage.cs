@@ -21,11 +21,14 @@ public class Luggage : MonoBehaviour
         transform.Translate(_moveVector * _moveSpeed * Time.deltaTime);
     }
 
-    private void OnTriggerEnter2D()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        _routeType = _routeController.CurrentRoute;
-        _moveVector = GetRouteVector(_routeType);
-        _moveVector = _moveVector.normalized;
+        if(other.CompareTag("BranchingArea"))
+        {
+            _routeType = _routeController.CurrentRoute;
+            _moveVector = GetRouteVector(_routeType);
+            _moveVector = _moveVector.normalized;
+        }
         
     }
     private Vector2 GetRouteVector(RouteType routeType)

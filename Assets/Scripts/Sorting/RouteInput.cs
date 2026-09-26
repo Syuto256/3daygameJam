@@ -7,7 +7,6 @@ public class RouteInput : MonoBehaviour
     
     public void OnLeft(InputAction.CallbackContext left)
     {
-        Debug.Log("Leftが呼ばれた。");
         if(left.performed)
         {
             
@@ -17,7 +16,6 @@ public class RouteInput : MonoBehaviour
 
     public void OnCenter(InputAction.CallbackContext center)
     {
-        Debug.Log("Centerが呼ばれた。");
         if(center.performed)
         {
             
@@ -27,7 +25,6 @@ public class RouteInput : MonoBehaviour
 
     public void OnRight(InputAction.CallbackContext right)
     {
-        Debug.Log("Rightが呼ばれた。");
         if(right.performed)
         {
             
