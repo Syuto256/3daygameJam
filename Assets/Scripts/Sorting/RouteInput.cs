@@ -33,4 +33,14 @@ public class RouteInput : MonoBehaviour
         }
     }
 
+    public void OnUp(InputAction.CallbackContext up)
+    {
+        if(up.performed)
+        {
+            Debug.Log("OnUp");
+            _routeController.ChangeRoute(RouteType.Up);
+            _routeView?.UpdateRouteView(RouteType.Up);
+        }
+    }
+
 }

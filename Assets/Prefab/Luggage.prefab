@@ -108,6 +108,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Luggage
   _moveSpeed: 5
+  _routeType: 1
+  _routeController: {fileID: 0}
+  _correctType: 0
+  _luggageType: 0
 --- !u!61 &8402496081204686980
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -169,7 +173,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

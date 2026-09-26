@@ -4,12 +4,20 @@ public enum RouteType
 {
     Left,
     Center,
-    Right
+    Right,
+    Up
 }
 
 public enum CorrectType
 {
     Left,
     Center,
-    Right
+    Right,
+    Up
+}
+
+public enum LuggageStatus
+{
+    Normal,
+    Defective
 }
