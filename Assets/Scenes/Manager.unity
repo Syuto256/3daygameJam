@@ -389,6 +389,7 @@ GameObject:
   - component: {fileID: 1912074040}
   - component: {fileID: 1912074043}
   - component: {fileID: 1912074042}
+  - component: {fileID: 1912074044}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -457,6 +458,19 @@ MonoBehaviour:
   sceneBgmList:
   - Scene: 1
     BgmName: Morning
+--- !u!114 &1912074044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912074039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6953d7e7abc7e34da4ebd9f766488dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Scripts.Core.Manager.SettingsManager
+  sliderValue: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
