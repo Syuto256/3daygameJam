@@ -26,6 +26,31 @@ namespace Scripts.Core.Event
         }
     }
 
+    // --- 音量イベント ---
+    /// <summary>
+    /// 音量カテゴリの定義
+    /// </summary>
+    public enum VolumeType
+    {
+        BGM,
+        SE
+    }
+
+    /// <summary>
+    /// 音量変更リクエストイベント (0.0f ～ 1.0f)
+    /// </summary>
+    public readonly struct ChangeVolumeEvent
+    {
+        public readonly VolumeType Type;
+        public readonly float Volume; 
+
+        public ChangeVolumeEvent(VolumeType type, float volume)
+        {
+            Type = type;
+            Volume = Mathf.Clamp01(volume);
+        }
+    }
+
     /// <summary>
     /// BGM再生リクエストイベント
     /// </summary>

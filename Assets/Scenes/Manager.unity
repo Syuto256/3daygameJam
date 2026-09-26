@@ -145,7 +145,7 @@ AudioSource:
   m_GameObject: {fileID: 115390597}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 6293457305750373357, guid: 98a982eff91e3704aac88efbe7755de5, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
@@ -274,7 +274,7 @@ AudioSource:
   m_GameObject: {fileID: 1041380811}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 1209807619687512464, guid: 98a982eff91e3704aac88efbe7755de5, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
@@ -435,11 +435,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa15dcd2c283ad45940ff0f1629e206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Scripts.Core.Audio.AudioManager
+  audioMixer: {fileID: 24100000, guid: 98a982eff91e3704aac88efbe7755de5, type: 2}
   bgmSource: {fileID: 115390598}
   seSource: {fileID: 1041380812}
   bgmClips:
   - {fileID: 8300000, guid: 0c85a38850172864f999461c8f8931f9, type: 3}
   seClips: []
+  defaultBgmVolume: 1
 --- !u!114 &1912074043
 MonoBehaviour:
   m_ObjectHideFlags: 0
