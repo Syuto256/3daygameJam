@@ -6,6 +6,7 @@ public class RouteInput : MonoBehaviour
     [SerializeField] private RouteController _routeController;
     [SerializeField] private RouteView _routeView;
     [SerializeField] private RouteSwitchPunch _routeSwitchPunch;
+    [SerializeField] private PlayerView _playerView;
 
     public void OnLeft(InputAction.CallbackContext left)
     {
@@ -45,6 +46,7 @@ public class RouteInput : MonoBehaviour
         _routeController.ChangeRoute(routeType);
         if(_routeView != null) _routeView.UpdateRouteView(routeType);
         if(_routeSwitchPunch != null) _routeSwitchPunch.Play();
+        if(_playerView != null) _playerView.Press(routeType);
     }
 
 }
