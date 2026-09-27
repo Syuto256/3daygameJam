@@ -62,21 +62,31 @@ namespace Scripts.Core.Audio
 
             bgmSource.loop = true;
             seSource.loop = false;
+
+            // AudioMixerが割り当てられている場合は通知ログを出力
+            if (audioMixer == null)
+            {
+                Debug.LogWarning("[AudioManager] AudioMixer が Inspector 上でセットされていません！");
+            }
         }
 
         private void RegisterClipsToDictionary()
         {
+            bgmDict.Clear();
             foreach (var clip in bgmClips)
             {
                 if (clip != null && !bgmDict.ContainsKey(clip.name))
                     bgmDict.Add(clip.name, clip);
             }
 
+            seDict.Clear();
             foreach (var clip in seClips)
             {
                 if (clip != null && !seDict.ContainsKey(clip.name))
                     seDict.Add(clip.name, clip);
             }
+
+            Debug.Log($"[AudioManager] 登録完了 - BGM: {bgmDict.Count}件, SE: {seDict.Count}件");
         }
 
         // --- 音量変更処理 ---
@@ -102,6 +112,7 @@ namespace Scripts.Core.Audio
 
             string paramName = type == VolumeType.BGM ? BGM_VOLUME_PARAM : SE_VOLUME_PARAM;
             audioMixer.SetFloat(paramName, db);
+            Debug.Log($"[AudioManager] 音量設定変更: {type} -> {normalizedVolume} (dB: {db})");
         }
 
         // --- SE再生処理 ---
@@ -114,11 +125,13 @@ namespace Scripts.Core.Audio
         {
             if (seDict.TryGetValue(seName, out var clip))
             {
+                // 音声再生の試行情報をログ出力
+                Debug.Log($"[AudioManager] SE再生実行: '{seName}' | Volume: {volume} | AudioSource.mute: {seSource.mute} | AudioSource.volume: {seSource.volume}");
                 seSource.PlayOneShot(clip, volume);
             }
             else
             {
-                Debug.LogWarning($"[AudioManager] SE '{seName}' が見つかりません。");
+                Debug.LogWarning($"[AudioManager] SE '{seName}' が見つかりません。登録されているSE一覧: {string.Join(", ", seDict.Keys)}");
             }
         }
 
@@ -132,7 +145,7 @@ namespace Scripts.Core.Audio
         {
             if (!bgmDict.TryGetValue(bgmName, out var newClip))
             {
-                Debug.LogWarning($"[AudioManager] BGM '{bgmName}' が見つかりません。");
+                Debug.LogWarning($"[AudioManager] BGM '{bgmName}' が見つかりません。登録されているBGM一覧: {string.Join(", ", bgmDict.Keys)}");
                 return;
             }
 
@@ -165,6 +178,8 @@ namespace Scripts.Core.Audio
             bgmSource.loop = loop;
             bgmSource.volume = 0f;
             bgmSource.Play();
+
+            Debug.Log($"[AudioManager] BGM再生開始: '{nextClip.name}'");
 
             if (fadeDuration > 0)
             {

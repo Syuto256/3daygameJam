@@ -441,7 +441,9 @@ MonoBehaviour:
   seSource: {fileID: 1041380812}
   bgmClips:
   - {fileID: 8300000, guid: 0c85a38850172864f999461c8f8931f9, type: 3}
-  seClips: []
+  seClips:
+  - {fileID: 8300000, guid: b6cb0a36d1993244ebc52563bda564e9, type: 3}
+  - {fileID: 8300000, guid: c7cb9e08e43b00541baec343b194efc3, type: 3}
   defaultBgmVolume: 1
 --- !u!114 &1912074043
 MonoBehaviour:
@@ -470,7 +472,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6953d7e7abc7e34da4ebd9f766488dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Scripts.Core.Manager.SettingsManager
-  sliderValue: 0.5
+  bgmVolume: 0.8
+  seVolume: 0.8
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
