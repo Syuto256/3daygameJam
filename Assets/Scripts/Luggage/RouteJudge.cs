@@ -5,6 +5,7 @@ public class RouteJudge : MonoBehaviour
 {
     [SerializeField] private CorrectType _judgeRoute;
     [SerializeField] private ScoreManager _scoreManager;
+    [SerializeField] private HPManager _hpManager;
     [SerializeField] private JudgeFeedbackView _feedbackView;
     [SerializeField] private ScreenFeedbackView _screenFeedbackView;
 
@@ -54,6 +55,7 @@ public class RouteJudge : MonoBehaviour
     private void OnIncorrect(LuggageJudgeView luggageView)
     {
         Debug.Log("不正解");
+        if (_hpManager != null) _hpManager.TakeDamage();
         if (_scoreManager != null) _scoreManager.SubtractScore();
         EventBus.Publish(new PlaySEEvent(INCORRECT_SE_NAME));
 

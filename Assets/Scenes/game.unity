@@ -855,6 +855,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RouteJudge
   _judgeRoute: 2
   _scoreManager: {fileID: 1342811801}
+  _hpManager: {fileID: 1625424053}
 --- !u!1 &176751168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1672,6 +1673,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RouteJudge
   _judgeRoute: 1
   _scoreManager: {fileID: 1342811801}
+  _hpManager: {fileID: 1625424053}
 --- !u!1 &519590420
 GameObject:
   m_ObjectHideFlags: 0
@@ -4256,6 +4258,67 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpJudge
   _scoreManager: {fileID: 1342811801}
+--- !u!1 &1625424051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1625424054}
+  - component: {fileID: 1625424053}
+  - component: {fileID: 1625424052}
+  m_Layer: 0
+  m_Name: HPManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1625424052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625424051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d13c138cdc88fe44b2e914fcf4043bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HPUI
+  _hpManager: {fileID: 1625424053}
+  _hpImage:
+  - {fileID: 0}
+--- !u!114 &1625424053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625424051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6d55994230c2b44b88d2be2c872ab48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HPManager
+  _maxHP: 5
+--- !u!4 &1625424054
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625424051}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.55903, y: 0, z: 1.68751}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1644404366
 GameObject:
   m_ObjectHideFlags: 0
@@ -5390,6 +5453,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RouteJudge
   _judgeRoute: 0
   _scoreManager: {fileID: 1342811801}
+  _hpManager: {fileID: 1625424053}
 --- !u!1 &2129616068
 GameObject:
   m_ObjectHideFlags: 0
@@ -5499,3 +5563,4 @@ SceneRoots:
   - {fileID: 1342811803}
   - {fileID: 1277208045}
   - {fileID: 1823715684}
+  - {fileID: 1625424054}
