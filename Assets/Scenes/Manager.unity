@@ -440,7 +440,7 @@ MonoBehaviour:
   bgmSource: {fileID: 115390598}
   seSource: {fileID: 1041380812}
   bgmClips:
-  - {fileID: 8300000, guid: 0c85a38850172864f999461c8f8931f9, type: 3}
+  - {fileID: 8300000, guid: cec92d47f83e819499d23cc28ca52adc, type: 3}
   seClips:
   - {fileID: 8300000, guid: b6cb0a36d1993244ebc52563bda564e9, type: 3}
   - {fileID: 8300000, guid: c7cb9e08e43b00541baec343b194efc3, type: 3}
@@ -459,7 +459,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Scripts.Core.Audio.SceneBgmManager
   sceneBgmList:
   - Scene: 1
-    BgmName: Morning
+    BgmName: BGM
 --- !u!114 &1912074044
 MonoBehaviour:
   m_ObjectHideFlags: 0
