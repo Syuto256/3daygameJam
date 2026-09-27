@@ -6,8 +6,11 @@
 //   - 組み立て先は Assets/Scenes/Imata.unity だけ（他のシーンには反映されない）
 //   - 既存シーンを開いたまま、ここに書いた名前のオブジェクトだけを作り直す
 //     （手で置いたオブジェクトは残る）
-//   - シーンのオブジェクトはすべて最上位の InGame の下にまとめる
-//     （InGame は組み立て時に自動で用意されるので、DSL には書かない。Parent: InGame で参照する）
+//   - シーンの中身は InGame プレハブ。DSL の値はプレハブインスタンスのオーバーライドとして入る
+//     （プレハブにも反映したいときは、シーンの InGame で Overrides > Apply All）
+//   - InGame の下は役割ごとにまとめる
+//       System（管理役） / Camera / Stage（Environment・Conveyor） / Judge / FeedbackView / UI
+//     新しく作るものは、このどれかを Parent にする
 //   - もう作らなくなったオブジェクトは Object ブロックの外に "Remove: 名前" と書くと消える
 //   - 手で置いた既存オブジェクトの値を変えたいときは Type: Existing を使う
 //     （Parent を省略すると、シーン全体から同じ名前のオブジェクトを探して値だけ上書きする。
@@ -59,7 +62,7 @@ Object
 // 分岐を切り替えたら分岐パーツを弾ませる
 Object
 {
-    Name: BranchPart_AllOff
+    Name: BranchPart
     Type: Existing
     Component: RouteSwitchPunch
     {
@@ -74,7 +77,7 @@ Object
     Type: Existing
     Component: RouteInput
     {
-        _routeSwitchPunch: @BranchPart_AllOff
+        _routeSwitchPunch: @BranchPart
     }
 }
 
@@ -84,7 +87,7 @@ Object
 Object
 {
     Name: InGameBackground
-    Parent: InGame
+    Parent: Environment
     Type: Empty
     Component: Transform
     {
@@ -127,7 +130,7 @@ Object
 Object
 {
     Name: Lights
-    Parent: InGame
+    Parent: Environment
     Type: Empty
 }
 
@@ -242,7 +245,7 @@ Object
 Object
 {
     Name: Dust
-    Parent: InGame
+    Parent: Environment
     Type: Empty
     Component: FloatingDust
     {
@@ -257,13 +260,13 @@ Object
 // ---- 正解・不正解の演出 ------------------------------------------
 // 判定（RouteJudge / UpJudge）が、箱ごとの演出（JudgeFeedbackView）と
 // 画面全体の演出（Main Camera の ScreenFeedbackView）を呼ぶ。
-// 位置は箱の上のパネル（ランプ）に合わせている。Container / #2 / #3 = 中央 / 左 / 右
+// 位置は箱の上のパネル（ランプ）に合わせている
 // カメラが z = 0 にあるので、z は 1 にしておく（0 だとカメラの手前で切れて映らない）
 
 Object
 {
     Name: LeftFeedback
-    Parent: InGame
+    Parent: FeedbackView
     Type: Empty
     Component: Transform
     {
@@ -271,7 +274,7 @@ Object
     }
     Component: JudgeFeedbackView
     {
-        _bounceTarget: @Container#2
+        _bounceTarget: @Container_Left
         _lamp: @LeftFeedbackLamp
         _correctParticles: @LeftFeedbackSparkle
         _incorrectParticles: @LeftFeedbackSmoke
@@ -350,7 +353,7 @@ Object
 Object
 {
     Name: CenterFeedback
-    Parent: InGame
+    Parent: FeedbackView
     Type: Empty
     Component: Transform
     {
@@ -358,7 +361,7 @@ Object
     }
     Component: JudgeFeedbackView
     {
-        _bounceTarget: @Container
+        _bounceTarget: @Container_Center
         _lamp: @CenterFeedbackLamp
         _correctParticles: @CenterFeedbackSparkle
         _incorrectParticles: @CenterFeedbackSmoke
@@ -437,7 +440,7 @@ Object
 Object
 {
     Name: RightFeedback
-    Parent: InGame
+    Parent: FeedbackView
     Type: Empty
     Component: Transform
     {
@@ -445,7 +448,7 @@ Object
     }
     Component: JudgeFeedbackView
     {
-        _bounceTarget: @Container#3
+        _bounceTarget: @Container_Right
         _lamp: @RightFeedbackLamp
         _correctParticles: @RightFeedbackSparkle
         _incorrectParticles: @RightFeedbackSmoke
@@ -526,7 +529,7 @@ Object
 Object
 {
     Name: UpFeedback
-    Parent: InGame
+    Parent: FeedbackView
     Type: Empty
     Component: Transform
     {
