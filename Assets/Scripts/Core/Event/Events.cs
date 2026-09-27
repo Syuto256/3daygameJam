@@ -52,6 +52,14 @@ namespace Scripts.Core.Event
     }
 
     /// <summary>
+    /// ゲームオーバーイベント
+    /// </summary>
+    public readonly struct GameOverEvent
+    {
+        // 必要に応じてスコアなどを保持して渡すことも可能です
+    }
+
+    /// <summary>
     /// BGM再生リクエストイベント
     /// </summary>
     public readonly struct PlayBGMEvent

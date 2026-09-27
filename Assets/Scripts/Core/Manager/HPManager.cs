@@ -1,4 +1,5 @@
 using UnityEngine;
+using Scripts.Core.Event;
 
 public class HPManager : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class HPManager : MonoBehaviour
 
     void Start()
     {
-        _hp = _maxHP;
+        _hp = 0; 
         if (_hpUI != null)
         {
             _hpUI.Initialize(_maxHP);
@@ -19,11 +20,13 @@ public class HPManager : MonoBehaviour
 
     public void TakeDamage()
     {
-        _hp -= 1;
+        _hp += 1;
         if (_hpUI != null) _hpUI.ShowHP(_hp);
-        if(_hp <= 0)
+
+        if (_hp >= 5)
         {
-            Debug.Log("リザルトに行く");
+            Debug.Log("ゲームオーバー：リザルトを表示します");
+            EventBus.Publish(new GameOverEvent());
         }
     }
 }
