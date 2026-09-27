@@ -11,6 +11,7 @@ namespace GameJam.Editor.Visual
     ///       - 光のにじみ・光の筋・ほこりの粒（グラデーション画像）
     ///       - 背景画像から切り抜いたバルブ（回して動かす）
     ///       - 正解・不正解の演出に使うキラキラ・画面の縁の光・パーティクル用マテリアル
+    ///       - HP 表示の部品（配置見本の画像から、部品ごとに余白を切り落としたもの）
     ///       - 画面効果（Bloom / Vignette / 色調整）の Volume Profile
     ///
     ///     何度実行しても同じものが上書きされるだけなので、値を変えたら実行し直せばよい
@@ -22,6 +23,7 @@ namespace GameJam.Editor.Visual
         private const string ParticleShaderName = "GameJam/Particle";
         private const string VolumeProfilePath = "Assets/Visual/InGameVolumeProfile.asset";
         private const string BackgroundPath = "Assets/Images/Background/In-GameBackground.png";
+        private const string HPImageDirectory = "Assets/Images/HP";
 
         /// <summary>背景画像の中のバルブの位置（左上原点のピクセル座標）と半径</summary>
         public static readonly Vector2 ValveCenterPixel = new(46f, 134f);
@@ -40,6 +42,12 @@ namespace GameJam.Editor.Visual
             WriteSprite("Valve", CreateValveCutout());
             WriteSprite("Sparkle", CreateSparkle(64));
             WriteSprite("Edge_Glow", CreateEdgeGlow(256, 144));
+
+            // HP の画像は画面全体の配置見本なので、部品ごとに切り出す。UI で縮めて使うので半分の大きさにする
+            WriteSprite("HP_Panel", CropToContent($"{HPImageDirectory}/Panel_Base.png", 0.5f));
+            WriteSprite("HP_NamePlate", CropToContent($"{HPImageDirectory}/Error_NamePlate.png", 0.5f));
+            WriteSprite("HP_LampOn", CropToContent($"{HPImageDirectory}/MissLampe_on.png", 0.5f));
+            WriteSprite("HP_LampOff", CropToContent($"{HPImageDirectory}/Miss_Lamp_off.png", 0.5f));
 
             // 正解のキラキラは加算で光らせ、不正解の煙は半透明で重ねる
             CreateParticleMaterial("ParticleAdditive", "Sparkle", BlendMode.SrcAlpha, BlendMode.One);
@@ -169,6 +177,43 @@ namespace GameJam.Editor.Visual
             }
 
             texture.Apply();
+            return texture;
+        }
+
+        /// <summary>透明な余白を切り落とし、scale 倍に縮めた画像を返す</summary>
+        private static Texture2D CropToContent(string path, float scale)
+        {
+            var source = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            source.LoadImage(File.ReadAllBytes(path));
+
+            int minX = source.width, minY = source.height, maxX = -1, maxY = -1;
+            var pixels = source.GetPixels32();
+            for (int y = 0; y < source.height; y++)
+            for (int x = 0; x < source.width; x++)
+            {
+                if (pixels[y * source.width + x].a < 8) continue;
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+            }
+
+            int cropWidth = maxX - minX + 1;
+            int cropHeight = maxY - minY + 1;
+            int width = Mathf.Max(1, Mathf.RoundToInt(cropWidth * scale));
+            int height = Mathf.Max(1, Mathf.RoundToInt(cropHeight * scale));
+
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+            {
+                float u = (minX + (x + 0.5f) / width * cropWidth) / source.width;
+                float v = (minY + (y + 0.5f) / height * cropHeight) / source.height;
+                texture.SetPixel(x, y, source.GetPixelBilinear(u, v));
+            }
+
+            texture.Apply();
+            Object.DestroyImmediate(source);
             return texture;
         }
 
