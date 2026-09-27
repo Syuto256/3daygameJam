@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Scripts.Core.Event;
 
 public class RouteView : MonoBehaviour
 {
@@ -25,11 +26,19 @@ public class RouteView : MonoBehaviour
     [Header("3組の画像設定 (Left / Center / Right)")]
     [SerializeField] private RouteImageData[] _routeImageSets = new RouteImageData[3];
 
+    [Header("SE設定")]
+    [SerializeField] private string _switchSeName = "Switch"; 
+
     /// <summary>
     /// 入力されたルートに合わせて2箇所の画像を同時に更新する
     /// </summary>
     public void UpdateRouteView(RouteType routeType)
     {
+        if (!string.IsNullOrEmpty(_switchSeName))
+        {
+            EventBus.Publish(new PlaySEEvent(_switchSeName));
+        }
+
         foreach (var data in _routeImageSets)
         {
             if (data.routeType == routeType)
