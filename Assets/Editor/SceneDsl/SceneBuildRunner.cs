@@ -62,7 +62,9 @@ namespace GameJam.Editor.SceneDsl
         {
             DisplayName = ImataName,
             DslPath = SceneDslPaths.TargetDslPath,
-            ScenePath = SceneDslPaths.TargetScenePath
+            ScenePath = SceneDslPaths.TargetScenePath,
+            // シーンのオブジェクトはすべて InGame の下にまとめる（DSL で InGame を作る）
+            RootObjectName = "InGame"
         };
 
         // %&g = Ctrl + Alt + G
@@ -211,6 +213,7 @@ namespace GameJam.Editor.SceneDsl
                 : EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             MergeWorkScenes(definition, scene);
+            EnsureRootObject(definition, scene);
 
             // 土台になるシーンプレハブ。中身は消さずに、同名のオブジェクトへ値を書き込む相手として使う
             var scenePrefabRoot = ResolveScenePrefabRoot(definition, scene);
@@ -402,6 +405,23 @@ namespace GameJam.Editor.SceneDsl
         }
 
         /// <summary>
+        ///     まとめ先のルート（InGame など）を用意する。
+        ///     DSL に書くと毎回「子ごと消して作り直す」対象になり、手で置いたものまで消えてしまうので、
+        ///     ルートは DSL では作らず、ここで無いときだけ作る。DSL からは Parent: InGame で参照する
+        /// </summary>
+        private static void EnsureRootObject(SceneBuildDefinition definition, UnityEngine.SceneManagement.Scene scene)
+        {
+            if (string.IsNullOrEmpty(definition.RootObjectName)) return;
+
+            foreach (var go in scene.GetRootGameObjects())
+                if (go.name == definition.RootObjectName)
+                    return;
+
+            var root = new GameObject(definition.RootObjectName);
+            SceneManager.MoveGameObjectToScene(root, scene);
+        }
+
+        /// <summary>
         ///     取り込んだオブジェクトも含めて、残りのルートをすべてシーン名のルートの下にまとめる
         /// </summary>
         private static void GroupRootsUnder(
@@ -454,6 +474,10 @@ namespace GameJam.Editor.SceneDsl
                 if (def.Type == "Existing") continue;
                 declaredNames.Add(def.Name);
             }
+
+            // 名前を変えたりやめたりして、もう作らないオブジェクトは "Remove: 名前" で消す
+            foreach (var name in SceneDslParser.ParseRemovedNames(dslText))
+                declaredNames.Add(name);
 
             if (declaredNames.Count == 0) return;
 

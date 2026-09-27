@@ -79,7 +79,11 @@ def refresh(timeout):
     started = False
     deadline = time.time() + 20
     while time.time() < deadline:
-        if mtime(COMPILE) > compile_before or mtime(STATE) > state_before:
+        if mtime(COMPILE) > compile_before:
+            started = True
+            break
+        # state.json はドメインの読み込み直しでも書き換わるので、コンパイル中と書かれたときだけ開始とみなす
+        if mtime(STATE) > state_before and (read_json(STATE) or {}).get("isCompiling"):
             started = True
             break
         time.sleep(0.5)

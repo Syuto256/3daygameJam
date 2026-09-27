@@ -78,6 +78,21 @@ namespace GameJam.Editor.SceneDsl
             return result;
         }
 
+        /// <summary>
+        ///     Object ブロックの外に書かれた "Remove: 名前" を集める。
+        ///     組み立て前にその名前のオブジェクトをシーンから消すための指定
+        /// </summary>
+        public static List<string> ParseRemovedNames(string dslText)
+        {
+            var result = new List<string>();
+            if (string.IsNullOrEmpty(dslText)) return result;
+
+            foreach (Match match in Regex.Matches(StripComments(dslText), @"^\s*Remove\s*:\s*(.+?)\s*$", RegexOptions.Multiline))
+                result.Add(match.Groups[1].Value);
+
+            return result;
+        }
+
         static bool IsWhitespaceOnly(string s)
         {
             foreach (char c in s) if (!char.IsWhiteSpace(c)) return false;

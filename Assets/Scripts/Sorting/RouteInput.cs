@@ -5,22 +5,21 @@ public class RouteInput : MonoBehaviour
 {
     [SerializeField] private RouteController _routeController;
     [SerializeField] private RouteView _routeView;
-    
+    [SerializeField] private RouteSwitchPunch _routeSwitchPunch;
+
     public void OnLeft(InputAction.CallbackContext left)
     {
         if(left.performed)
         {
-            _routeController.ChangeRoute(RouteType.Left);
-            _routeView?.UpdateRouteView(RouteType.Left);
+            ChangeRoute(RouteType.Left);
         }
     }
 
     public void OnCenter(InputAction.CallbackContext center)
     {
         if(center.performed)
-        {        
-            _routeController.ChangeRoute(RouteType.Center);
-            _routeView?.UpdateRouteView(RouteType.Center);
+        {
+            ChangeRoute(RouteType.Center);
         }
     }
 
@@ -28,8 +27,7 @@ public class RouteInput : MonoBehaviour
     {
         if(right.performed)
         {
-            _routeController.ChangeRoute(RouteType.Right);
-            _routeView?.UpdateRouteView(RouteType.Right);
+            ChangeRoute(RouteType.Right);
         }
     }
 
@@ -38,9 +36,15 @@ public class RouteInput : MonoBehaviour
         if(up.performed)
         {
             Debug.Log("OnUp");
-            _routeController.ChangeRoute(RouteType.Up);
-            _routeView?.UpdateRouteView(RouteType.Up);
+            ChangeRoute(RouteType.Up);
         }
+    }
+
+    private void ChangeRoute(RouteType routeType)
+    {
+        _routeController.ChangeRoute(routeType);
+        if(_routeView != null) _routeView.UpdateRouteView(routeType);
+        if(_routeSwitchPunch != null) _routeSwitchPunch.Play();
     }
 
 }

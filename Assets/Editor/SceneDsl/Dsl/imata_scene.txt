@@ -6,7 +6,9 @@
 //   - 組み立て先は Assets/Scenes/Imata.unity だけ（他のシーンには反映されない）
 //   - 既存シーンを開いたまま、ここに書いた名前のオブジェクトだけを作り直す
 //     （手で置いたオブジェクトは残る）
-//   - DSL で新しく作るものは、すべて ImataVisual の下にぶら下げる
+//   - シーンのオブジェクトはすべて最上位の InGame の下にまとめる
+//     （InGame は組み立て時に自動で用意されるので、DSL には書かない。Parent: InGame で参照する）
+//   - もう作らなくなったオブジェクトは Object ブロックの外に "Remove: 名前" と書くと消える
 //   - 手で置いた既存オブジェクトの値を変えたいときは Type: Existing を使う
 //     （Parent を省略すると、シーン全体から同じ名前のオブジェクトを探して値だけ上書きする。
 //       Existing の名前は削除の対象にならない）
@@ -25,9 +27,231 @@
 //   }
 // ===============================================================
 
-// DSL で作る見た目の置き場
+// 以前の置き場。InGame の下へ直接置くようにしたので消す
+Remove: ImataVisual
+
+// ---- 画面効果 ----------------------------------------------------
+// Bloom / Vignette / 色調整。素材は Tools > Visual > Generate Assets で作る
+
 Object
 {
-    Name: ImataVisual
+    Name: Global Volume
+    Type: Existing
+    Component: UnityEngine.Rendering.Volume
+    {
+        sharedProfile: <VolumeProfile>InGameVolumeProfile
+    }
+}
+
+// ---- ベルトコンベア ----------------------------------------------
+
+// ベルト面を荷物と同じ速さで流す
+Object
+{
+    Name: BeltConveyor
+    Type: Existing
+    Component: BeltConveyorScroller
+    {
+        _beltSprite: <Sprite>BeltConveyor_Straight_Belt
+        _scrollMaterial: <Material>BeltScroll
+        _worldSpeed: 5
+    }
+}
+
+// 分岐を切り替えたら分岐パーツを弾ませる
+Object
+{
+    Name: BranchPart_AllOff
+    Type: Existing
+    Component: RouteSwitchPunch
+    {
+        _punchScale: 1.12
+        _duration: 0.18
+    }
+}
+
+Object
+{
+    Name: RouteSystem
+    Type: Existing
+    Component: RouteInput
+    {
+        _routeSwitchPunch: @BranchPart_AllOff
+    }
+}
+
+// ---- 背景 --------------------------------------------------------
+
+// 画面（16:9、横 17.8 単位）を横いっぱいに覆う大きさ
+Object
+{
+    Name: InGameBackground
+    Parent: InGame
     Type: Empty
+    Component: Transform
+    {
+        localPosition: 0,0,5
+        localScale: 1.16,1.16,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>In-GameBackground
+        // 床を少し暗く沈めて、コンベアと光を浮かせる
+        color: #A7ABB4FF
+        sortingOrder: -100
+    }
+}
+
+// 背景から切り抜いたバルブを、元の位置に重ねて回す
+Object
+{
+    Name: Valve
+    Parent: InGameBackground
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: -7.22,3.78,-0.01
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Valve
+        sortingOrder: -99
+    }
+    Component: SlowRotator
+    {
+        _degreesPerSecond: -40
+    }
+}
+
+// ---- 光 ----------------------------------------------------------
+// 加算合成の光を床に落とす。LightFlicker でゆっくり明滅させる
+
+Object
+{
+    Name: Lights
+    Parent: InGame
+    Type: Empty
+}
+
+Object
+{
+    Name: FloorLight_Left
+    Parent: Lights
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: -5.8,2.2,4
+        localScale: 3.2,3.2,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Glow_Soft
+        sharedMaterial: <Material>LightAdditive
+        color: #FFD49A4D
+        sortingOrder: -90
+    }
+    Component: LightFlicker
+    {
+        _baseAlpha: 0.3
+        _pulseAmplitude: 0.03
+        _pulseSpeed: 1.2
+    }
+}
+
+Object
+{
+    Name: FloorLight_Right
+    Parent: Lights
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: 6,-1.2,4
+        localScale: 3.6,3.6,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Glow_Soft
+        sharedMaterial: <Material>LightAdditive
+        color: #FFD49A4D
+        sortingOrder: -90
+    }
+    Component: LightFlicker
+    {
+        _baseAlpha: 0.3
+        _pulseAmplitude: 0.03
+        _pulseSpeed: 0.9
+    }
+}
+
+// 天井の窓から差し込む光の筋。右側は古い蛍光灯のようにたまにチラつく
+Object
+{
+    Name: LightBeam_Left
+    Parent: Lights
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: -6.3,1.2,3
+        localScale: 2.6,2,1
+        localEulerAngles: 0,0,-18
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Light_Beam
+        sharedMaterial: <Material>LightAdditive
+        color: #FFF1D624
+        sortingOrder: -85
+    }
+    Component: LightFlicker
+    {
+        _baseAlpha: 0.14
+        _pulseAmplitude: 0.02
+        _pulseSpeed: 0.6
+    }
+}
+
+Object
+{
+    Name: LightBeam_Right
+    Parent: Lights
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: 6.4,1.2,3
+        localScale: 2.6,2,1
+        localEulerAngles: 0,0,18
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Light_Beam
+        sharedMaterial: <Material>LightAdditive
+        color: #FFF1D624
+        sortingOrder: -85
+    }
+    Component: LightFlicker
+    {
+        _baseAlpha: 0.14
+        _pulseAmplitude: 0.02
+        _pulseSpeed: 0.7
+        _flickerChance: 0.15
+        _flickerDuration: 0.15
+    }
+}
+
+// ---- 空気 --------------------------------------------------------
+
+// 光の中を漂うほこり
+Object
+{
+    Name: Dust
+    Parent: InGame
+    Type: Empty
+    Component: FloatingDust
+    {
+        _sprite: <Sprite>Dust
+        _count: 45
+        _area: 18,10
+        _color: #FFF2D95A
+        _sortingOrder: 50
+    }
 }
