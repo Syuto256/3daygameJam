@@ -11,6 +11,7 @@ namespace Scripts.Core.Manager
         Manager,
         Title,
         Game,
+        Result,
     }
 
     /// <summary>
