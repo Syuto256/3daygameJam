@@ -8193,7 +8193,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 1ec8b9e37ecb9064e9970b582bf689bd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -20500,6 +20500,7 @@ MonoBehaviour:
   _scoreManager: {fileID: 8447435493325868961}
   _feedbackView: {fileID: 2344371198243373003}
   _screenFeedbackView: {fileID: 2531083867551203839}
+  _hpManager: {fileID: 7769812390710437973}
 --- !u!61 &4809150869099084030
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -21406,16 +21407,16 @@ MonoBehaviour:
   _routeImageSets:
   - routeType: 1
     arrowSprite: {fileID: 21300000, guid: a11a4640408657e4897daf7122dda0f4, type: 3}
-    characterSprite: {fileID: 21300000, guid: e4a3efca04c45014b96aa9ef673c4fce, type: 3}
+    characterSprite: {fileID: 21300000, guid: 9c4d354f7f392094486904b4e5eda924, type: 3}
   - routeType: 0
     arrowSprite: {fileID: 21300000, guid: c6698ca8a7e7f6e469915ae3abd7075a, type: 3}
-    characterSprite: {fileID: 21300000, guid: a8dfcb18032b62547ad6a2a818b6083b, type: 3}
+    characterSprite: {fileID: 21300000, guid: 9c4d354f7f392094486904b4e5eda924, type: 3}
   - routeType: 2
     arrowSprite: {fileID: 21300000, guid: 7bad7dab05974e046bde938fb4b277b6, type: 3}
-    characterSprite: {fileID: 21300000, guid: be240661a98acbd4e8a25f3c4b3b952d, type: 3}
+    characterSprite: {fileID: 21300000, guid: 9c4d354f7f392094486904b4e5eda924, type: 3}
   - routeType: 3
     arrowSprite: {fileID: 21300000, guid: 94c1353d7233f7a469bf459a90ceb44c, type: 3}
-    characterSprite: {fileID: 21300000, guid: 47dc81bd4f0bca64f9349c17a7f41d01, type: 3}
+    characterSprite: {fileID: 21300000, guid: 9c4d354f7f392094486904b4e5eda924, type: 3}
 --- !u!1 &5496792736051841978
 GameObject:
   m_ObjectHideFlags: 0
