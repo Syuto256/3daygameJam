@@ -14,9 +14,13 @@ public class RouteView : MonoBehaviour
         public Sprite characterSprite;
     }
 
-    [Header("表示対象のUI（2箇所）")]
-    [SerializeField] private Image _arrowImage; 
-    [SerializeField] private Image _characterImage; 
+    [Header("方向矢印の表示対象 (どちらか片方を割り当て)")]
+    [SerializeField] private Image _arrowImage;
+    [SerializeField] private SpriteRenderer _arrowSpriteRenderer;
+
+    [Header("キャラクターの表示対象 (どちらか片方を割り当て)")]
+    [SerializeField] private Image _characterImage;
+    [SerializeField] private SpriteRenderer _characterSpriteRenderer;
 
     [Header("3組の画像設定 (Left / Center / Right)")]
     [SerializeField] private RouteImageData[] _routeImageSets = new RouteImageData[3];
@@ -30,14 +34,30 @@ public class RouteView : MonoBehaviour
         {
             if (data.routeType == routeType)
             {
-                if (_arrowImage != null && data.arrowSprite != null)
+                // --- 矢印画像の更新 ---
+                if (data.arrowSprite != null)
                 {
-                    _arrowImage.sprite = data.arrowSprite;
+                    if (_arrowImage != null)
+                    {
+                        _arrowImage.sprite = data.arrowSprite;
+                    }
+                    if (_arrowSpriteRenderer != null)
+                    {
+                        _arrowSpriteRenderer.sprite = data.arrowSprite;
+                    }
                 }
 
-                if (_characterImage != null && data.characterSprite != null)
+                // --- キャラクター画像の更新 ---
+                if (data.characterSprite != null)
                 {
-                    _characterImage.sprite = data.characterSprite;
+                    if (_characterImage != null)
+                    {
+                        _characterImage.sprite = data.characterSprite;
+                    }
+                    if (_characterSpriteRenderer != null)
+                    {
+                        _characterSpriteRenderer.sprite = data.characterSprite;
+                    }
                 }
 
                 break;
