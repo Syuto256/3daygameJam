@@ -14,14 +14,14 @@ public class HPManager : MonoBehaviour
         if (_hpUI != null)
         {
             _hpUI.Initialize(_maxHP);
-            _hpUI.ShowHP(_hp);
+            _hpUI.ShowMissCount(_hp);
         }
     }
 
     public void TakeDamage()
     {
         _hp += 1;
-        if (_hpUI != null) _hpUI.ShowHP(_hp);
+        if (_hpUI != null) _hpUI.ShowMissCount(_hp);
 
         if (_hp >= 5)
         {
