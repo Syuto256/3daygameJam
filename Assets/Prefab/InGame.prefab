@@ -1930,6 +1930,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RouteJudge
   _judgeRoute: 0
   _scoreManager: {fileID: 8447435493325868961}
+  _feedbackView: {fileID: 0}
+  _screenFeedbackView: {fileID: 0}
 --- !u!61 &225201988775799709
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2254,6 +2256,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RouteJudge
   _judgeRoute: 1
   _scoreManager: {fileID: 8447435493325868961}
+  _feedbackView: {fileID: 0}
+  _screenFeedbackView: {fileID: 0}
 --- !u!61 &3424221702670946638
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3754,6 +3758,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpJudge
   _scoreManager: {fileID: 8447435493325868961}
+  _feedbackView: {fileID: 0}
+  _screenFeedbackView: {fileID: 0}
 --- !u!61 &4809150869099084030
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3847,6 +3853,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RouteJudge
   _judgeRoute: 2
   _scoreManager: {fileID: 8447435493325868961}
+  _feedbackView: {fileID: 0}
+  _screenFeedbackView: {fileID: 0}
 --- !u!61 &797376738532113594
 BoxCollider2D:
   m_ObjectHideFlags: 0

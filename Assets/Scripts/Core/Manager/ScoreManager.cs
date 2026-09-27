@@ -6,6 +6,8 @@ public class ScoreManager : MonoBehaviour
     public int Score => _score;
     [SerializeField] private int _addScore = 100;
     [SerializeField] private int _subtractScore = -100;
+    public int AddAmount => _addScore;
+    public int SubtractAmount => _subtractScore;
 
     public void AddScore()
     {

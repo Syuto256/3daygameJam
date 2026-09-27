@@ -83,7 +83,7 @@ namespace GameJam.Editor.SceneDsl
             {
                 // DSL で作っていない相手なら、既にシーンに居るオブジェクトを名前で探す
                 // （作業シーンから取り込んだ Main Camera / Player を参照したいとき）
-                targetGo = FindInSceneByName(refName);
+                targetGo = SceneObjectLookup.Find(refName);
                 if (targetGo == null)
                     throw new Exception($"参照 '@{refName}' に対応するオブジェクトが見つかりません");
             }
@@ -106,18 +106,6 @@ namespace GameJam.Editor.SceneDsl
             }
 
             throw new Exception($"参照型 {targetType.Name} には対応していません（@{refName}）");
-        }
-
-        /// <summary>既にシーンに存在するオブジェクトを名前で探す（非アクティブも対象）</summary>
-        private static GameObject FindInSceneByName(string name)
-        {
-            if (string.IsNullOrEmpty(name)) return null;
-
-            foreach (var t in UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include))
-                if (t.name == name)
-                    return t.gameObject;
-
-            return null;
         }
 
         public static bool ParseBool(string raw)

@@ -10,6 +10,7 @@ namespace GameJam.Editor.Visual
     ///     インゲームの見た目に使う素材をコードで作る。
     ///       - 光のにじみ・光の筋・ほこりの粒（グラデーション画像）
     ///       - 背景画像から切り抜いたバルブ（回して動かす）
+    ///       - 正解・不正解の演出に使うキラキラ・画面の縁の光・パーティクル用マテリアル
     ///       - 画面効果（Bloom / Vignette / 色調整）の Volume Profile
     ///
     ///     何度実行しても同じものが上書きされるだけなので、値を変えたら実行し直せばよい
@@ -17,6 +18,8 @@ namespace GameJam.Editor.Visual
     public static class VisualAssetGenerator
     {
         private const string TextureDirectory = "Assets/Visual/Textures";
+        private const string MaterialDirectory = "Assets/Visual/Materials";
+        private const string ParticleShaderName = "GameJam/Particle";
         private const string VolumeProfilePath = "Assets/Visual/InGameVolumeProfile.asset";
         private const string BackgroundPath = "Assets/Images/Background/In-GameBackground.png";
 
@@ -35,6 +38,12 @@ namespace GameJam.Editor.Visual
             WriteSprite("Light_Beam", CreateBeam(128, 512));
             WriteSprite("Dust", CreateRadialGlow(32));
             WriteSprite("Valve", CreateValveCutout());
+            WriteSprite("Sparkle", CreateSparkle(64));
+            WriteSprite("Edge_Glow", CreateEdgeGlow(256, 144));
+
+            // 正解のキラキラは加算で光らせ、不正解の煙は半透明で重ねる
+            CreateParticleMaterial("ParticleAdditive", "Sparkle", BlendMode.SrcAlpha, BlendMode.One);
+            CreateParticleMaterial("ParticleSmoke", "Glow_Soft", BlendMode.SrcAlpha, BlendMode.OneMinusSrcAlpha);
 
             CreateVolumeProfile();
 
@@ -117,6 +126,67 @@ namespace GameJam.Editor.Visual
             texture.Apply();
             Object.DestroyImmediate(source);
             return texture;
+        }
+
+        /// <summary>十字に光が伸びるキラキラ</summary>
+        private static Texture2D CreateSparkle(int size)
+        {
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var center = (size - 1) * 0.5f;
+
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                float nx = (x - center) / center;
+                float ny = (y - center) / center;
+                float distance = Mathf.Sqrt(nx * nx + ny * ny);
+
+                float core = Mathf.Clamp01(1f - distance * 3f);
+                float rayX = Mathf.Exp(-Mathf.Abs(ny) * 14f) * Mathf.Clamp01(1f - Mathf.Abs(nx));
+                float rayY = Mathf.Exp(-Mathf.Abs(nx) * 14f) * Mathf.Clamp01(1f - Mathf.Abs(ny));
+                float alpha = Mathf.Clamp01(core * core + Mathf.Max(rayX, rayY));
+                texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+            }
+
+            texture.Apply();
+            return texture;
+        }
+
+        /// <summary>中央が透明で、画面の縁へ向かって濃くなる枠。画面全体に引き伸ばして使う</summary>
+        private static Texture2D CreateEdgeGlow(int width, int height)
+        {
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+
+            for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+            {
+                float u = Mathf.Abs((float)x / (width - 1) - 0.5f) * 2f;
+                float v = Mathf.Abs((float)y / (height - 1) - 0.5f) * 2f;
+                float dx = Mathf.Clamp01((u - 0.55f) / 0.45f);
+                float dy = Mathf.Clamp01((v - 0.45f) / 0.55f);
+                float alpha = Mathf.Clamp01(Mathf.Sqrt(dx * dx + dy * dy));
+                texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha * alpha));
+            }
+
+            texture.Apply();
+            return texture;
+        }
+
+        private static void CreateParticleMaterial(string name, string textureName, BlendMode source, BlendMode destination)
+        {
+            var path = $"{MaterialDirectory}/{name}.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(Shader.Find(ParticleShaderName));
+                AssetDatabase.CreateAsset(material, path);
+            }
+
+            material.shader = Shader.Find(ParticleShaderName);
+            material.SetTexture("_MainTex", AssetDatabase.LoadAssetAtPath<Texture2D>($"{TextureDirectory}/{textureName}.png"));
+            material.SetFloat("_SrcBlend", (float)source);
+            material.SetFloat("_DstBlend", (float)destination);
+            EditorUtility.SetDirty(material);
         }
 
         private static void WriteSprite(string name, Texture2D texture)

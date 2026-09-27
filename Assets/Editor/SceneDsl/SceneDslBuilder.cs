@@ -149,7 +149,7 @@ namespace GameJam.Editor.SceneDsl
                 {
                     // DSL で作っていない相手なら、既にシーンに居るオブジェクトを名前で探す
                     // （作業シーンから取り込んだ Player などの下に置きたいとき）
-                    parentGo = FindInSceneByName(def.Parent);
+                    parentGo = SceneObjectLookup.Find(def.Parent);
                     if (parentGo == null)
                     {
                         log.Error($"Parent '{def.Parent}' が見つかりません（Object: {def.Name}）。ルートのまま残します。");
@@ -168,7 +168,7 @@ namespace GameJam.Editor.SceneDsl
                 // （作業シーンから取り込んだ Main Camera などをそのまま設定したいとき）
                 if (string.IsNullOrEmpty(def.Parent))
                 {
-                    var existing = FindInSceneByName(ToObjectName(def.Name));
+                    var existing = SceneObjectLookup.Find(def.Name);
                     if (existing == null)
                     {
                         log.Error($"Existing '{def.Name}' がシーンに見つかりません。");
@@ -442,21 +442,6 @@ namespace GameJam.Editor.SceneDsl
 
                 PrefabUtility.RecordPrefabInstancePropertyModifications(target);
             }
-        }
-
-        /// <summary>
-        /// 既にシーンに存在するオブジェクトを名前で探す（非アクティブも対象）。
-        /// DSL の Parent に、作業シーンから取り込んだオブジェクトを指定できるようにするためのもの
-        /// </summary>
-        private static GameObject FindInSceneByName(string name)
-        {
-            if (string.IsNullOrEmpty(name)) return null;
-
-            foreach (var t in UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include))
-                if (t.name == name)
-                    return t.gameObject;
-
-            return null;
         }
 
         private static void CheckDuplicateNames(List<ObjectDef> objectDefs, BuildLog log)

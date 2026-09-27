@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5749230363847010149}
   - component: {fileID: 8402496081204686980}
   - component: {fileID: 3784608740583494326}
+  - component: {fileID: 2351509933294147433}
   m_Layer: 0
   m_Name: Luggage
   m_TagString: Untagged
@@ -192,3 +193,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &2351509933294147433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3771560989435732152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0e20c081dcf0f24a8ccc547e060dd39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LuggageJudgeView
+  _spriteRenderer: {fileID: 8263727891665111606}
+  _shrinkDuration: 0.25
+  _incorrectDuration: 0.5
+  _incorrectColor: {r: 1, g: 0.35, b: 0.35, a: 1}

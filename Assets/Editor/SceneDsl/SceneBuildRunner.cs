@@ -64,7 +64,9 @@ namespace GameJam.Editor.SceneDsl
             DslPath = SceneDslPaths.TargetDslPath,
             ScenePath = SceneDslPaths.TargetScenePath,
             // シーンのオブジェクトはすべて InGame の下にまとめる（DSL で InGame を作る）
-            RootObjectName = "InGame"
+            RootObjectName = "InGame",
+            // Imata の中身は InGame プレハブ。DSL の値はプレハブインスタンスのオーバーライドとして書き込む
+            ScenePrefabPath = "Assets/Prefab/InGame.prefab"
         };
 
         // %&g = Ctrl + Alt + G
@@ -213,10 +215,12 @@ namespace GameJam.Editor.SceneDsl
                 : EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             MergeWorkScenes(definition, scene);
-            EnsureRootObject(definition, scene);
 
             // 土台になるシーンプレハブ。中身は消さずに、同名のオブジェクトへ値を書き込む相手として使う
             var scenePrefabRoot = ResolveScenePrefabRoot(definition, scene);
+
+            // シーンプレハブが無いときだけ、まとめ先のルートを空で用意する
+            if (scenePrefabRoot == null) EnsureRootObject(definition, scene);
 
             // 先に重複を畳んでから掃除する。順番が逆だと、作業シーン側の中身が
             // プレハブへ引っ越す前に消えてしまう
