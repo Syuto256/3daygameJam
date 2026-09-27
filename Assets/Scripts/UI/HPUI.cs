@@ -5,7 +5,7 @@ using UnityEngine.UI;
 /// <summary>
 /// HP（仕分けエラーの残り回数）の表示。
 /// ミスするたびにランプが左から1つずつ赤く点き、パネルが揺れる。残り1回になると点いたランプが脈打って危険を知らせる。
-/// いつ表示を変えるかは知らず、HPManager から Initialize / ShowHP を呼ばれたときだけ動く
+/// いつ表示を変えるかは知らず、HPManager から Initialize / ShowMissCount を呼ばれたときだけ動く
 /// </summary>
 public class HPUI : MonoBehaviour
 {
@@ -46,10 +46,10 @@ public class HPUI : MonoBehaviour
         for (int i = 0; i < maxHP; i++) CreateLamp(i);
     }
 
-    /// <summary>今の HP を表示する。ミスが増えていたら、新しく点いたランプを弾ませてパネルを揺らす</summary>
-    public void ShowHP(int hp)
+    /// <summary>ミスの回数を表示する。増えていたら、新しく点いたランプを弾ませてパネルを揺らす</summary>
+    public void ShowMissCount(int count)
     {
-        int missCount = Mathf.Clamp(_maxHP - hp, 0, _maxHP);
+        int missCount = Mathf.Clamp(count, 0, _maxHP);
 
         if (missCount > _missCount)
         {

@@ -78,6 +78,7 @@ Object
     Component: RouteInput
     {
         _routeSwitchPunch: @BranchPart
+        _playerView: @Operator
     }
 }
 
@@ -657,6 +658,7 @@ Object
     Component: UpJudge
     {
         _feedbackView: @UpFeedback
+        _hpManager: @HPManager
         _screenFeedbackView: @Main Camera
     }
 }
@@ -792,5 +794,115 @@ Object
         childControlHeight: false
         childForceExpandWidth: false
         childForceExpandHeight: false
+    }
+}
+
+// ---- 操作盤とプレイヤー ------------------------------------------
+// コンベアの右に、縦向きの操作盤と、それを操作するプレイヤーを置く。
+// 素材はどれも 512px の同じキャンバスに描かれた重ね合わせ用なので、同じ位置に重ねて、
+// Operator ごと 90 度回して縦にする（上から 黄 / 青 / 赤）。
+// ボタンを押すと PlayerView がプレイヤーを横にずらして、指先をそのボタンに合わせる
+
+Object
+{
+    Name: Operator
+    Parent: Stage
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: 6.3,0.3,1
+        localEulerAngles: 0,0,90
+        localScale: 1.5,1.5,1
+    }
+    Component: PlayerView
+    {
+        _player: @Player
+        _waitSprite: <Sprite>Player_Wait
+        _pushSprite: <Sprite>Player_PushButton
+        _leftButton: @ConsoleButton_Left
+        _leftOff: <Sprite>Console_RedButtonOff
+        _leftOn: <Sprite>Console_RedButtonOn
+        _centerButton: @ConsoleButton_Center
+        _centerOff: <Sprite>Console_BlueButtonOff
+        _centerOn: <Sprite>Console_BlueButtonOn
+        _rightButton: @ConsoleButton_Right
+        _rightOff: <Sprite>Console_YellowButtonOff
+        _rightOn: <Sprite>Console_YellowButtonOn
+    }
+}
+
+Object
+{
+    Name: ConsoleBase
+    Parent: Operator
+    Type: Empty
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>ConsoleBase
+        sortingOrder: 10
+    }
+}
+
+Object
+{
+    Name: ConsoleButton_Left
+    Parent: Operator
+    Type: Empty
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Console_RedButtonOff
+        sortingOrder: 11
+    }
+}
+
+Object
+{
+    Name: ConsoleButton_Center
+    Parent: Operator
+    Type: Empty
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Console_BlueButtonOff
+        sortingOrder: 11
+    }
+}
+
+Object
+{
+    Name: ConsoleButton_Right
+    Parent: Operator
+    Type: Empty
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Console_YellowButtonOff
+        sortingOrder: 11
+    }
+}
+
+// 手が操作盤の上に重なるよう、プレイヤーは操作盤より手前に描く
+Object
+{
+    Name: Player
+    Parent: Operator
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: -0.07,0.027,0
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Player_Wait
+        sortingOrder: 13
+    }
+}
+
+// 以前の画面左のキャラクター表示は、操作盤のプレイヤーに置き換えたので隠す
+Object
+{
+    Name: CharacterImage
+    Type: Existing
+    Component: UnityEngine.RectTransform
+    {
+        active: false
     }
 }
