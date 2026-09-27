@@ -86,7 +86,6 @@ namespace Scripts.Core.Audio
                     seDict.Add(clip.name, clip);
             }
 
-            Debug.Log($"[AudioManager] 登録完了 - BGM: {bgmDict.Count}件, SE: {seDict.Count}件");
         }
 
         // --- 音量変更処理 ---
@@ -112,7 +111,6 @@ namespace Scripts.Core.Audio
 
             string paramName = type == VolumeType.BGM ? BGM_VOLUME_PARAM : SE_VOLUME_PARAM;
             audioMixer.SetFloat(paramName, db);
-            Debug.Log($"[AudioManager] 音量設定変更: {type} -> {normalizedVolume} (dB: {db})");
         }
 
         // --- SE再生処理 ---
@@ -179,7 +177,6 @@ namespace Scripts.Core.Audio
             bgmSource.volume = 0f;
             bgmSource.Play();
 
-            Debug.Log($"[AudioManager] BGM再生開始: '{nextClip.name}'");
 
             if (fadeDuration > 0)
             {
