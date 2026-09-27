@@ -6,6 +6,7 @@ public class UpJudge : MonoBehaviour
     [SerializeField] private ScoreManager _scoreManager;
     [SerializeField] private JudgeFeedbackView _feedbackView;
     [SerializeField] private ScreenFeedbackView _screenFeedbackView;
+    [SerializeField] private HPManager _hpManager;
 
     private const string CORRECT_SE_NAME = "CorrectSE";
     private const string INCORRECT_SE_NAME = "IncorrectSE";
@@ -26,6 +27,7 @@ public class UpJudge : MonoBehaviour
         else
         {
             Debug.Log("失敗");
+            _hpManager.TakeDamage();
             _scoreManager.SubtractScore();
             EventBus.Publish(new PlaySEEvent(INCORRECT_SE_NAME));
             if (_feedbackView != null) _feedbackView.PlayIncorrect(_scoreManager.SubtractAmount);
