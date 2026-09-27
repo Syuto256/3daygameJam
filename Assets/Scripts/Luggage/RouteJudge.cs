@@ -5,6 +5,7 @@ public class RouteJudge : MonoBehaviour
 {
     [SerializeField] private CorrectType _judgeRoute;
     [SerializeField] private ScoreManager _scoreManager;
+    [SerializeField] private HPManager _hpManager;
 
     private const string CORRECT_SE_NAME = "CorrectSE";
     private const string INCORRECT_SE_NAME = "IncorrectSE";
@@ -47,6 +48,7 @@ public class RouteJudge : MonoBehaviour
     private void OnIncorrect()
     {
         Debug.Log("不正解");
+        _hpManager.TakeDamage();
         if (_scoreManager != null) _scoreManager.SubtractScore();
         EventBus.Publish(new PlaySEEvent(INCORRECT_SE_NAME));
     }
