@@ -613,7 +613,7 @@ Object
     }
 }
 
-// 判定から演出を呼ぶ
+// 判定から演出と HP を呼ぶ
 Object
 {
     Name: LeftJudge
@@ -621,6 +621,7 @@ Object
     Component: RouteJudge
     {
         _feedbackView: @LeftFeedback
+        _hpManager: @HPManager
         _screenFeedbackView: @Main Camera
     }
 }
@@ -632,6 +633,7 @@ Object
     Component: RouteJudge
     {
         _feedbackView: @CenterFeedback
+        _hpManager: @HPManager
         _screenFeedbackView: @Main Camera
     }
 }
@@ -643,6 +645,7 @@ Object
     Component: RouteJudge
     {
         _feedbackView: @RightFeedback
+        _hpManager: @HPManager
         _screenFeedbackView: @Main Camera
     }
 }
@@ -688,5 +691,106 @@ Object
         sprite: <Sprite>Edge_Glow
         color: #FF2A2A00
         raycastTarget: false
+    }
+}
+
+// ---- HP（仕分けエラーの残り回数） --------------------------------
+// HPManager が HPUI を呼んで表示を変える。ランプは HPUI が最大 HP の数だけ並べる
+
+Object
+{
+    Name: HPManager
+    Parent: System
+    Type: Empty
+    Component: HPManager
+    {
+        _maxHP: 5
+        _hpUI: @HPPanel
+    }
+}
+
+// 画面サイズが変わっても UI の大きさの比率が保たれるよう、1920x1080 を基準に拡大縮小する
+Object
+{
+    Name: Canvas
+    Type: Existing
+    Component: UnityEngine.UI.CanvasScaler
+    {
+        uiScaleMode: ScaleWithScreenSize
+        referenceResolution: 1920,1080
+        matchWidthOrHeight: 0.5
+    }
+}
+
+// 画面右上のパネル
+Object
+{
+    Name: HPPanel
+    Parent: Canvas
+    Type: Image
+    Component: RectTransform
+    {
+        anchorMin: 1,1
+        anchorMax: 1,1
+        pivot: 1,1
+        anchoredPosition: -24,-40
+        sizeDelta: 480,101
+    }
+    Component: UnityEngine.UI.Image
+    {
+        sprite: <Sprite>HP_Panel
+        raycastTarget: false
+    }
+    Component: HPUI
+    {
+        _lampContainer: @HPLamps
+        _lampOffSprite: <Sprite>HP_LampOff
+        _lampOnSprite: <Sprite>HP_LampOn
+        _lampSize: 64,62
+        _panel: @HPPanel
+    }
+}
+
+// パネルの上辺に掛かる「仕分けエラー」の札
+Object
+{
+    Name: HPNamePlate
+    Parent: HPPanel
+    Type: Image
+    Component: RectTransform
+    {
+        anchorMin: 0,1
+        anchorMax: 0,1
+        pivot: 0,0.5
+        anchoredPosition: 20,0
+        sizeDelta: 190,36
+    }
+    Component: UnityEngine.UI.Image
+    {
+        sprite: <Sprite>HP_NamePlate
+        raycastTarget: false
+    }
+}
+
+Object
+{
+    Name: HPLamps
+    Parent: HPPanel
+    Type: Panel
+    Component: RectTransform
+    {
+        anchorMin: 0,0
+        anchorMax: 1,1
+        anchoredPosition: 0,-6
+        sizeDelta: -40,-30
+    }
+    Component: UnityEngine.UI.HorizontalLayoutGroup
+    {
+        childAlignment: MiddleCenter
+        spacing: 14
+        childControlWidth: false
+        childControlHeight: false
+        childForceExpandWidth: false
+        childForceExpandHeight: false
     }
 }
