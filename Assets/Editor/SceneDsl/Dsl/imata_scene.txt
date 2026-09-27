@@ -1,0 +1,692 @@
+// ===============================================================
+// Imata シーン構築 DSL
+//   Tools > Scene DSL > Build Imata Scene（Ctrl + Alt + G）で Imata シーンへ反映する
+//
+// 決めごと:
+//   - 組み立て先は Assets/Scenes/Imata.unity だけ（他のシーンには反映されない）
+//   - 既存シーンを開いたまま、ここに書いた名前のオブジェクトだけを作り直す
+//     （手で置いたオブジェクトは残る）
+//   - シーンの中身は InGame プレハブ。DSL の値はプレハブインスタンスのオーバーライドとして入る
+//     （プレハブにも反映したいときは、シーンの InGame で Overrides > Apply All）
+//   - InGame の下は役割ごとにまとめる
+//       System（管理役） / Camera / Stage（Environment・Conveyor） / Judge / FeedbackView / UI
+//     新しく作るものは、このどれかを Parent にする
+//   - もう作らなくなったオブジェクトは Object ブロックの外に "Remove: 名前" と書くと消える
+//   - 手で置いた既存オブジェクトの値を変えたいときは Type: Existing を使う
+//     （Parent を省略すると、シーン全体から同じ名前のオブジェクトを探して値だけ上書きする。
+//       Existing の名前は削除の対象にならない）
+//   - Component は名前空間まで書く（短い名前は Unity 内部の型と衝突することがある）
+//
+// 書き方:
+//   Object
+//   {
+//       Name: 名前
+//       Parent: 親の名前          // 省略するとシーンのルート
+//       Type: Empty / Image / TMP_Text / Button / Canvas / プレハブ名 / Existing
+//       Component: 型名
+//       {
+//           フィールド名: 値       // 数値 / true / #RRGGBB / 1,2,3 / @オブジェクト名 / <Sprite>画像名
+//       }
+//   }
+// ===============================================================
+
+
+// ---- 画面効果 ----------------------------------------------------
+// Bloom / Vignette / 色調整。素材は Tools > Visual > Generate Assets で作る
+
+Object
+{
+    Name: Global Volume
+    Type: Existing
+    Component: UnityEngine.Rendering.Volume
+    {
+        sharedProfile: <VolumeProfile>InGameVolumeProfile
+    }
+}
+
+// ---- ベルトコンベア ----------------------------------------------
+
+// ベルト面を荷物と同じ速さで流す
+Object
+{
+    Name: BeltConveyor
+    Type: Existing
+    Component: BeltConveyorScroller
+    {
+        _beltSprite: <Sprite>BeltConveyor_Straight_Belt
+        _scrollMaterial: <Material>BeltScroll
+        _worldSpeed: 5
+    }
+}
+
+// 分岐を切り替えたら分岐パーツを弾ませる
+Object
+{
+    Name: BranchPart
+    Type: Existing
+    Component: RouteSwitchPunch
+    {
+        _punchScale: 1.12
+        _duration: 0.18
+    }
+}
+
+Object
+{
+    Name: RouteSystem
+    Type: Existing
+    Component: RouteInput
+    {
+        _routeSwitchPunch: @BranchPart
+    }
+}
+
+// ---- 背景 --------------------------------------------------------
+
+// 画面（16:9、横 17.8 単位）を横いっぱいに覆う大きさ
+Object
+{
+    Name: InGameBackground
+    Parent: Environment
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: 0,0,5
+        localScale: 1.16,1.16,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>In-GameBackground
+        // 床を少し暗く沈めて、コンベアと光を浮かせる
+        color: #A7ABB4FF
+        sortingOrder: -100
+    }
+}
+
+// 背景から切り抜いたバルブを、元の位置に重ねて回す
+Object
+{
+    Name: Valve
+    Parent: InGameBackground
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: -7.22,3.78,-0.01
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Valve
+        sortingOrder: -99
+    }
+    Component: SlowRotator
+    {
+        _degreesPerSecond: -40
+    }
+}
+
+// ---- 光 ----------------------------------------------------------
+// 加算合成の光を床に落とす。LightFlicker でゆっくり明滅させる
+
+Object
+{
+    Name: Lights
+    Parent: Environment
+    Type: Empty
+}
+
+Object
+{
+    Name: FloorLight_Left
+    Parent: Lights
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: -5.8,2.2,4
+        localScale: 3.2,3.2,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Glow_Soft
+        sharedMaterial: <Material>LightAdditive
+        color: #FFD49A4D
+        sortingOrder: -90
+    }
+    Component: LightFlicker
+    {
+        _baseAlpha: 0.3
+        _pulseAmplitude: 0.03
+        _pulseSpeed: 1.2
+    }
+}
+
+Object
+{
+    Name: FloorLight_Right
+    Parent: Lights
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: 6,-1.2,4
+        localScale: 3.6,3.6,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Glow_Soft
+        sharedMaterial: <Material>LightAdditive
+        color: #FFD49A4D
+        sortingOrder: -90
+    }
+    Component: LightFlicker
+    {
+        _baseAlpha: 0.3
+        _pulseAmplitude: 0.03
+        _pulseSpeed: 0.9
+    }
+}
+
+// 天井の窓から差し込む光の筋。右側は古い蛍光灯のようにたまにチラつく
+Object
+{
+    Name: LightBeam_Left
+    Parent: Lights
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: -6.3,1.2,3
+        localScale: 2.6,2,1
+        localEulerAngles: 0,0,-18
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Light_Beam
+        sharedMaterial: <Material>LightAdditive
+        color: #FFF1D624
+        sortingOrder: -85
+    }
+    Component: LightFlicker
+    {
+        _baseAlpha: 0.14
+        _pulseAmplitude: 0.02
+        _pulseSpeed: 0.6
+    }
+}
+
+Object
+{
+    Name: LightBeam_Right
+    Parent: Lights
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: 6.4,1.2,3
+        localScale: 2.6,2,1
+        localEulerAngles: 0,0,18
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Light_Beam
+        sharedMaterial: <Material>LightAdditive
+        color: #FFF1D624
+        sortingOrder: -85
+    }
+    Component: LightFlicker
+    {
+        _baseAlpha: 0.14
+        _pulseAmplitude: 0.02
+        _pulseSpeed: 0.7
+        _flickerChance: 0.15
+        _flickerDuration: 0.15
+    }
+}
+
+// ---- 空気 --------------------------------------------------------
+
+// 光の中を漂うほこり
+Object
+{
+    Name: Dust
+    Parent: Environment
+    Type: Empty
+    Component: FloatingDust
+    {
+        _sprite: <Sprite>Dust
+        _count: 45
+        _area: 18,10
+        _color: #FFF2D95A
+        _sortingOrder: 50
+    }
+}
+
+// ---- 正解・不正解の演出 ------------------------------------------
+// 判定（RouteJudge / UpJudge）が、箱ごとの演出（JudgeFeedbackView）と
+// 画面全体の演出（Main Camera の ScreenFeedbackView）を呼ぶ。
+// 位置は箱の上のパネル（ランプ）に合わせている
+// カメラが z = 0 にあるので、z は 1 にしておく（0 だとカメラの手前で切れて映らない）
+
+Object
+{
+    Name: LeftFeedback
+    Parent: FeedbackView
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: -4.4,-3.2,1
+    }
+    Component: JudgeFeedbackView
+    {
+        _bounceTarget: @Container_Left
+        _lamp: @LeftFeedbackLamp
+        _correctParticles: @LeftFeedbackSparkle
+        _incorrectParticles: @LeftFeedbackSmoke
+        _font: <TMP_FontAsset>NotoSansJP-Black SDF
+        _popupOffset: 0,0.9,0
+    }
+}
+
+Object
+{
+    Name: LeftFeedbackLamp
+    Parent: LeftFeedback
+    Type: Empty
+    Component: Transform
+    {
+        localScale: 1.4,1.4,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Glow_Soft
+        sharedMaterial: <Material>LightAdditive
+        color: #FFFFFFBF
+        sortingOrder: 5
+    }
+}
+
+Object
+{
+    Name: LeftFeedbackSparkle
+    Parent: LeftFeedback
+    Type: Empty
+    Component: UnityEngine.ParticleSystem
+    {
+    }
+    Component: BurstParticles
+    {
+        _material: <Material>ParticleAdditive
+        _count: 18
+        _speedRange: 2,5
+        _lifetimeRange: 0.4,0.8
+        _sizeRange: 0.25,0.55
+        _colorA: #FFE38AFF
+        _colorB: #9CFF8AFF
+        _gravity: 0.6
+        _spreadAngle: 140
+        _rotationSpeed: 180
+        _sortingOrder: 30
+    }
+}
+
+Object
+{
+    Name: LeftFeedbackSmoke
+    Parent: LeftFeedback
+    Type: Empty
+    Component: UnityEngine.ParticleSystem
+    {
+    }
+    Component: BurstParticles
+    {
+        _material: <Material>ParticleSmoke
+        _count: 10
+        _speedRange: 0.5,1.5
+        _lifetimeRange: 0.6,1
+        _sizeRange: 0.6,1.1
+        _colorA: #6B6F78C0
+        _colorB: #9A9EA6A0
+        _gravity: -0.2
+        _spreadAngle: 360
+        _rotationSpeed: 60
+        _growOverLifetime: true
+        _sortingOrder: 30
+    }
+}
+
+Object
+{
+    Name: CenterFeedback
+    Parent: FeedbackView
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: 0,-3.2,1
+    }
+    Component: JudgeFeedbackView
+    {
+        _bounceTarget: @Container_Center
+        _lamp: @CenterFeedbackLamp
+        _correctParticles: @CenterFeedbackSparkle
+        _incorrectParticles: @CenterFeedbackSmoke
+        _font: <TMP_FontAsset>NotoSansJP-Black SDF
+        _popupOffset: 0,0.9,0
+    }
+}
+
+Object
+{
+    Name: CenterFeedbackLamp
+    Parent: CenterFeedback
+    Type: Empty
+    Component: Transform
+    {
+        localScale: 1.4,1.4,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Glow_Soft
+        sharedMaterial: <Material>LightAdditive
+        color: #FFFFFFBF
+        sortingOrder: 5
+    }
+}
+
+Object
+{
+    Name: CenterFeedbackSparkle
+    Parent: CenterFeedback
+    Type: Empty
+    Component: UnityEngine.ParticleSystem
+    {
+    }
+    Component: BurstParticles
+    {
+        _material: <Material>ParticleAdditive
+        _count: 18
+        _speedRange: 2,5
+        _lifetimeRange: 0.4,0.8
+        _sizeRange: 0.25,0.55
+        _colorA: #FFE38AFF
+        _colorB: #9CFF8AFF
+        _gravity: 0.6
+        _spreadAngle: 140
+        _rotationSpeed: 180
+        _sortingOrder: 30
+    }
+}
+
+Object
+{
+    Name: CenterFeedbackSmoke
+    Parent: CenterFeedback
+    Type: Empty
+    Component: UnityEngine.ParticleSystem
+    {
+    }
+    Component: BurstParticles
+    {
+        _material: <Material>ParticleSmoke
+        _count: 10
+        _speedRange: 0.5,1.5
+        _lifetimeRange: 0.6,1
+        _sizeRange: 0.6,1.1
+        _colorA: #6B6F78C0
+        _colorB: #9A9EA6A0
+        _gravity: -0.2
+        _spreadAngle: 360
+        _rotationSpeed: 60
+        _growOverLifetime: true
+        _sortingOrder: 30
+    }
+}
+
+Object
+{
+    Name: RightFeedback
+    Parent: FeedbackView
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: 4.4,-3.2,1
+    }
+    Component: JudgeFeedbackView
+    {
+        _bounceTarget: @Container_Right
+        _lamp: @RightFeedbackLamp
+        _correctParticles: @RightFeedbackSparkle
+        _incorrectParticles: @RightFeedbackSmoke
+        _font: <TMP_FontAsset>NotoSansJP-Black SDF
+        _popupOffset: 0,0.9,0
+    }
+}
+
+Object
+{
+    Name: RightFeedbackLamp
+    Parent: RightFeedback
+    Type: Empty
+    Component: Transform
+    {
+        localScale: 1.4,1.4,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Glow_Soft
+        sharedMaterial: <Material>LightAdditive
+        color: #FFFFFFBF
+        sortingOrder: 5
+    }
+}
+
+Object
+{
+    Name: RightFeedbackSparkle
+    Parent: RightFeedback
+    Type: Empty
+    Component: UnityEngine.ParticleSystem
+    {
+    }
+    Component: BurstParticles
+    {
+        _material: <Material>ParticleAdditive
+        _count: 18
+        _speedRange: 2,5
+        _lifetimeRange: 0.4,0.8
+        _sizeRange: 0.25,0.55
+        _colorA: #FFE38AFF
+        _colorB: #9CFF8AFF
+        _gravity: 0.6
+        _spreadAngle: 140
+        _rotationSpeed: 180
+        _sortingOrder: 30
+    }
+}
+
+Object
+{
+    Name: RightFeedbackSmoke
+    Parent: RightFeedback
+    Type: Empty
+    Component: UnityEngine.ParticleSystem
+    {
+    }
+    Component: BurstParticles
+    {
+        _material: <Material>ParticleSmoke
+        _count: 10
+        _speedRange: 0.5,1.5
+        _lifetimeRange: 0.6,1
+        _sizeRange: 0.6,1.1
+        _colorA: #6B6F78C0
+        _colorB: #9A9EA6A0
+        _gravity: -0.2
+        _spreadAngle: 360
+        _rotationSpeed: 60
+        _growOverLifetime: true
+        _sortingOrder: 30
+    }
+}
+
+// 不良品を戻す工場。画面の上端にあるので、文字は下に出す
+
+Object
+{
+    Name: UpFeedback
+    Parent: FeedbackView
+    Type: Empty
+    Component: Transform
+    {
+        localPosition: 0,4.65,1
+    }
+    Component: JudgeFeedbackView
+    {
+        _bounceTarget: @Factory
+        _lamp: @UpFeedbackLamp
+        _correctParticles: @UpFeedbackSparkle
+        _incorrectParticles: @UpFeedbackSmoke
+        _font: <TMP_FontAsset>NotoSansJP-Black SDF
+        _popupOffset: 0,-1.4,0
+    }
+}
+
+Object
+{
+    Name: UpFeedbackLamp
+    Parent: UpFeedback
+    Type: Empty
+    Component: Transform
+    {
+        localScale: 2,2,1
+    }
+    Component: SpriteRenderer
+    {
+        sprite: <Sprite>Glow_Soft
+        sharedMaterial: <Material>LightAdditive
+        color: #FFFFFFBF
+        sortingOrder: 5
+    }
+}
+
+Object
+{
+    Name: UpFeedbackSparkle
+    Parent: UpFeedback
+    Type: Empty
+    Component: UnityEngine.ParticleSystem
+    {
+    }
+    Component: BurstParticles
+    {
+        _material: <Material>ParticleAdditive
+        _count: 18
+        _speedRange: 2,5
+        _lifetimeRange: 0.4,0.8
+        _sizeRange: 0.25,0.55
+        _colorA: #FFE38AFF
+        _colorB: #9CFF8AFF
+        _gravity: 0.6
+        _spreadAngle: 140
+        _rotationSpeed: 180
+        _sortingOrder: 30
+    }
+}
+
+Object
+{
+    Name: UpFeedbackSmoke
+    Parent: UpFeedback
+    Type: Empty
+    Component: UnityEngine.ParticleSystem
+    {
+    }
+    Component: BurstParticles
+    {
+        _material: <Material>ParticleSmoke
+        _count: 10
+        _speedRange: 0.5,1.5
+        _lifetimeRange: 0.6,1
+        _sizeRange: 0.6,1.1
+        _colorA: #6B6F78C0
+        _colorB: #9A9EA6A0
+        _gravity: -0.2
+        _spreadAngle: 360
+        _rotationSpeed: 60
+        _growOverLifetime: true
+        _sortingOrder: 30
+    }
+}
+
+// 判定から演出を呼ぶ
+Object
+{
+    Name: LeftJudge
+    Type: Existing
+    Component: RouteJudge
+    {
+        _feedbackView: @LeftFeedback
+        _screenFeedbackView: @Main Camera
+    }
+}
+
+Object
+{
+    Name: CenterJudge
+    Type: Existing
+    Component: RouteJudge
+    {
+        _feedbackView: @CenterFeedback
+        _screenFeedbackView: @Main Camera
+    }
+}
+
+Object
+{
+    Name: RightJudge
+    Type: Existing
+    Component: RouteJudge
+    {
+        _feedbackView: @RightFeedback
+        _screenFeedbackView: @Main Camera
+    }
+}
+
+Object
+{
+    Name: UpJudge
+    Type: Existing
+    Component: UpJudge
+    {
+        _feedbackView: @UpFeedback
+        _screenFeedbackView: @Main Camera
+    }
+}
+
+// 不正解で画面を揺らし、縁を赤く光らせる
+Object
+{
+    Name: Main Camera
+    Type: Existing
+    Component: ScreenFeedbackView
+    {
+        _edgeFlash: @EdgeFlash
+        _flashAlpha: 0.55
+        _shakeStrength: 0.15
+    }
+}
+
+Object
+{
+    Name: EdgeFlash
+    Parent: Canvas
+    Type: Image
+    Component: RectTransform
+    {
+        anchorMin: 0,0
+        anchorMax: 1,1
+        sizeDelta: 0,0
+        anchoredPosition: 0,0
+    }
+    Component: UnityEngine.UI.Image
+    {
+        sprite: <Sprite>Edge_Glow
+        color: #FF2A2A00
+        raycastTarget: false
+    }
+}
