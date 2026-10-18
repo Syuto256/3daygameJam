@@ -23,7 +23,7 @@ public class HPManager : MonoBehaviour
         _hp += 1;
         if (_hpUI != null) _hpUI.ShowMissCount(_hp);
 
-        if (_hp >= 5)
+        if (_hp >= _maxHP)
         {
             Debug.Log("ゲームオーバー：リザルトを表示します");
             EventBus.Publish(new GameOverEvent());

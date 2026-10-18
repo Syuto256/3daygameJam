@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Scripts.Core.Event;
 
 public class LuggageSpawner : MonoBehaviour
 {
@@ -10,9 +11,29 @@ public class LuggageSpawner : MonoBehaviour
     [SerializeField] private RouteController _routeController;
     private List<Luggage> objList  = new List<Luggage>();
     private float _time;
+    private bool _isGameOver = false;
+
+    private void OnEnable()
+    {
+        EventBus.Subscribe<GameOverEvent>(OnGameOver);
+    }
     
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<GameOverEvent>(OnGameOver);
+    }
+
+    private void OnGameOver(GameOverEvent evt)
+    {
+        _isGameOver = true;
+    }
+
     void Update()
     {
+        if(_isGameOver)
+        {
+            return;
+        }
         _time += Time.deltaTime;
 
         if(_time >= _generationInterval)

@@ -12,12 +12,14 @@ namespace TechC.OXQuiz.UI
         public struct RulePage
         {
             public Sprite ImageSprite;
+            public Sprite SecondaryImageSprite;
             [TextArea(3, 5)] public string DescriptionText;
         }
 
         [Header("UI References")]
         [SerializeField] private GameObject _rulePanel;
         [SerializeField] private Image _pageImage;
+        [SerializeField] private Image _secondaryPageImage;
         [SerializeField] private TextMeshProUGUI _pageText;
 
         [Header("Buttons")]
@@ -82,8 +84,23 @@ namespace TechC.OXQuiz.UI
         private void UpdatePageDisplay()
         {
             var page = _pages[_currentPageIndex];
+            bool hasSecondaryImage = page.SecondaryImageSprite != null;
 
             _pageImage.sprite = page.ImageSprite;
+            _pageImage.preserveAspect = true;
+            _pageImage.rectTransform.anchoredPosition = hasSecondaryImage
+                ? new Vector2(0f, 105f)
+                : Vector2.zero;
+            _pageImage.rectTransform.sizeDelta = hasSecondaryImage
+                ? new Vector2(920f, 170f)
+                : new Vector2(1010f, 430f);
+
+            if (_secondaryPageImage != null)
+            {
+                _secondaryPageImage.sprite = page.SecondaryImageSprite;
+                _secondaryPageImage.gameObject.SetActive(hasSecondaryImage);
+            }
+
             _pageText.text = page.DescriptionText;
 
             _backButton.gameObject.SetActive(_currentPageIndex > 0);
